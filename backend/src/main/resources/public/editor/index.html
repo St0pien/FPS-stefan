@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor</title>
+
+    <link rel="stylesheet" href="css/editor.css">
+</head>
+<body>
+    <div class="wrapper">
+        <div class="grid">
+
+        </div>
+        <div class="buttons">
+            <div class="button save">
+                <button>zapisz level na serwerze</button>
+            </div>
+            <div class="button load">
+                <button>wczytaj level z serwera</button>
+            </div>
+            <label class="radio wall">
+                <input type="radio" name="type" value="wall">
+                <div>wall</div>
+            </label>
+            <label class="radio enemy">
+                <input type="radio" name="type" value="enemy">
+                <div>enemy</div>
+            </label>
+            <label class="radio treasure">
+                <input type="radio" name="type" value="treasure">
+                <div>treasure</div>
+            </label>
+            <label class="radio light">
+                <input type="radio" name="type" value="light">
+                <div>light</div>
+            </label>
+            <label class="radio delete">
+                <input type="radio" name="type" value="delete">
+                <div>delete</div>
+            </label>
+        </div>
+        <div class="output"></div>
+    </div>
+
+    <script src="js/editor.js"></script>
+</body>
+</html>

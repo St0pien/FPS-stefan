@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="root"></div>
+
+    <div class="camera-gui">
+        <div class="gui-category">
+            <div>
+                <input id="camera-y" type="range" min="0" max="30" value="10">
+                <label for="camera-y">Wysokość kamery</label>
+            </div>
+
+            <div>
+                <input id="camera-vertical" type="range" min="-20" max="20" value="0">
+                <label for="camera-vertical">Kąt nachylenia kamery x</label>
+            </div>
+
+            <div>
+                <input id="camera-dist" type="range" min="-20" max="100" value="45">
+                <label for="camera-dist">Odległość kamery od postaci</label>
+            </div>
+        </div>
+        <div class="gui-category">
+            <div>
+                <input id="camera-horizontal" type="range" min="-20" max="20" value="0">
+                <label for="camera-horizontal">Kąt widzenia kamery y</label>
+            </div>
+
+            <div>
+                <input id="camera-fov" type="range" min="30" max="100" value="75">
+                <label for="camera-fov">FOV kamery</label>
+            </div>
+
+            <div>
+                <input id="light-density" type="range" step="0.1" min="0" max="5" value="2">
+                <label for="light-density">Moc świateł</label>
+            </div>
+        </div>
+
+        <div class="gui-category">
+            <div>
+                <input type="checkbox" id="shadows" checked>
+                <label for="shadows">cienie</label>
+            </div>
+
+            <div>
+                <input type="checkbox" id="camera-top">
+                <label for="camera-top">Widok z góry</label>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

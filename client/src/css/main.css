@@ -1,0 +1,22 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+.camera-gui {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: .5em;
+    font-size: 1.2em;
+    color: white;
+}
+
+
+.gui-category {
+    display: flex;
+    flex-direction: column;
+}
