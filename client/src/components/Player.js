@@ -1,15 +1,13 @@
-import { ConeGeometry, Mesh, MeshBasicMaterial } from "three";
+import CharacterController from "./CharacterController";
+
 
 export default class Player {
     constructor(scene) {
         this.scene = scene;
-        const geometry = new ConeGeometry(5, 20);
-        const material = new MeshBasicMaterial({
-            color: 0xff0000,
-            wireframe: true
-        })
-        this.obj = new Mesh(geometry, material);
-        this.obj.position.set(600, 26, 700);
-        this.scene.add(this.obj);
+        this.character = new CharacterController({ scene: this.scene });
+    }
+
+    update(time) {
+        this.character.update(time);
     }
 }

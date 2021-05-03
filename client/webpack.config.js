@@ -26,13 +26,13 @@ module.exports = {
                 use: [MiniCssExtractPlugin.loader, 'css-loader']
             },
             {
-                test: /\.(png|jp(e*)g|svg)$/,
+                test: /\.(png|jp(e*)g|svg|fbx)$/,
                 use: [
                     {
                         loader: 'url-loader',
                         options: {
                             limit: 8000,
-                            name: 'images/[hash]-[name].[ext]'
+                            name: 'assets/[hash]-[name].[ext]'
                         }
                     }
                 ]

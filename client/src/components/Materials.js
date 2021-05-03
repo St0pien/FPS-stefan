@@ -72,4 +72,5 @@ function loadMaterial(materialName, scale=[1, 1]) {
 
 export const floorMaterial = loadMaterial('concrete', [5, 5]);
 export const wallMaterial = loadMaterial('rock');
+wallMaterial.displacementBias = -0.7;
 export const ceilingMaterial = loadMaterial('concretemoss', [8, 8]);
