@@ -1,5 +1,6 @@
 import { Group, Mesh, MeshPhongMaterial, PlaneGeometry } from "three";
 import { Wall, Enemy, Treasure, Light } from "./LevelItems";
+import { floorMaterial, ceilingMaterial } from "./Materials";
 
 export default class Maze {
     constructor(scene, levelItems, size=10, squareSize=100) {
@@ -33,19 +34,14 @@ export default class Maze {
         this.scene.add(this.group);
 
         const geometry = new PlaneGeometry(this.size*this.squareSize, this.size*this.squareSize);
-        let material = new MeshPhongMaterial({
-            color: 0x333333,
-        });
-        this.floor = new Mesh(geometry, material);
+
+        this.floor = new Mesh(geometry, floorMaterial);
         this.floor.receiveShadow = true;
         this.floor.position.set(this.size*this.squareSize / 2, 0, this.size*this.squareSize/2);
         this.floor.rotateX(-Math.PI/2);
         this.scene.add(this.floor);
 
-        material = new MeshPhongMaterial({
-            color: 0xaaaaaa,
-        })
-        this.ceiling = new Mesh(geometry, material);
+        this.ceiling = new Mesh(geometry, ceilingMaterial);
         this.ceiling.receiveShadow = true;
         this.ceiling.position.set(this.size*this.squareSize / 2, 100, this.size*this.squareSize/2);
         this.ceiling.rotateX(Math.PI/2);

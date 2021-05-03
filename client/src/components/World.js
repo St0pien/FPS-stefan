@@ -5,6 +5,7 @@ import HttpService from "./HttpService";
 import Maze from "./Maze";
 import Player from "./Player";
 
+
 export default class World {
     constructor(root) {
         this.root = root;

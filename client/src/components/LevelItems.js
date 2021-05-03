@@ -1,5 +1,7 @@
 import { BoxGeometry, DoubleSide, Mesh, MeshPhongMaterial, Object3D, PointLight, Vector3 } from "three";
 import GUI from "./GUI";
+import { wallMaterial } from "./Materials";
+
 
 class LevelItem {
     obj = new Object3D();
@@ -18,9 +20,11 @@ class LevelItem {
         if (GUI.options.shadows.checked) {
             if (!this.obj.castShadow) {
                 this.obj.castShadow = true;
+                this.obj.receiveShadow = true;
             }
         } else {
             this.obj.castShadow = false;
+            this.obj.receiveShadow = false;
         }
     }
 }
@@ -28,13 +32,10 @@ class LevelItem {
 export class Wall extends LevelItem {
     constructor(x, y, z, squareSize) {
         super(x, y, z, "wall", squareSize);
-        const geometry = new BoxGeometry(this.squareSize, this.squareSize, this.squareSize);
-        const material = new MeshPhongMaterial({
-            color: 0x00ff00,
-            side: DoubleSide,
-            shininess: 1
-        })
-        this.obj = new Mesh(geometry, material);
+        this.geometry = new BoxGeometry(this.squareSize, this.squareSize, this.squareSize);
+        this.material = wallMaterial;
+
+        this.obj = new Mesh(this.geometry, this.material);
         this.setPosition();
     }
 }

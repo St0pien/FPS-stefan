@@ -9,7 +9,7 @@ export default class Player {
             wireframe: true
         })
         this.obj = new Mesh(geometry, material);
-        this.obj.position.set(500, 26, 500);
+        this.obj.position.set(600, 26, 700);
         this.scene.add(this.obj);
     }
 }
