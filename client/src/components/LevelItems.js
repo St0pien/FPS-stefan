@@ -17,7 +17,7 @@ class LevelItem {
     }
 
     update() {
-        if (GUI.options.shadows.checked) {
+        if (GUI.getOptions().shadows) {
             if (!this.obj.castShadow) {
                 this.obj.castShadow = true;
                 this.obj.receiveShadow = true;
@@ -75,12 +75,14 @@ export class Light extends LevelItem {
     }
 
     update() {
-        if (GUI.options.shadows) {
+        if (GUI.getOptions().shadows) {
             if (!this.obj.castShadow) {
                 this.obj.castShadow = true;
             }
+        } else {
+            this.obj.castShadow = false;
         }
 
-        this.obj.intensity = parseFloat(GUI.options["light-density"].value);
+        this.obj.intensity = GUI.getOptions()['light-intensity'];
     }
 }

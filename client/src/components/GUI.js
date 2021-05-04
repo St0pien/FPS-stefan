@@ -5,9 +5,21 @@ const GUI = {
         'camera-dist': null,
         'camera-horizontal': null,
         'camera-fov': null,
-        'light-density': null,
+        'light-intensity': null,
         'shadows': null,
         'camera-top': null,
+    },
+
+    getOptions() {
+        const result = {};
+        for (let opt in this.options) {
+                result[opt] = parseFloat(this.options[opt].value);
+        }
+
+        result['camera-top'] = this.options["camera-top"].checked;
+        result['shadows'] = this.options["shadows"].checked;
+
+        return result;
     }
 }
 

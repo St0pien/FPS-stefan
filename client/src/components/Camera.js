@@ -17,18 +17,32 @@ export default class Camera {
     updateSize(renderer) {
         this.threeCamera.aspect = renderer.domElement.width / renderer.domElement.height;
         this.threeCamera.updateProjectionMatrix();
+
+        console.log(GUI.getOptions());
     }
 
     update() {
+        const options = GUI.getOptions();
+
+        if (options['camera-top']) {
+            this.threeCamera.position.set(500, 800, 500);
+            this.threeCamera.lookAt(new Vector3(500, 0, 500));
+            return;
+        }
+
         if (this.target.obj) {
-            const offset = new Vector3(0, 150, -200);
+            const offset = new Vector3(0, options['camera-y'], options['camera-dist']);
             
             const campPos = offset.applyMatrix4(this.target.obj.matrixWorld);
             this.threeCamera.position.set(campPos.x, campPos.y, campPos.z);
 
             const lookat = new Vector3(0, 10, 0);
-            lookat.add(this.target.obj.position);
+            lookat.add(new Vector3(options['camera-horizontal'], options['camera-vertical'], 0));
+            lookat.applyMatrix4(this.target.obj.matrixWorld);
             this.threeCamera.lookAt(lookat);
         }
+
+        this.threeCamera.fov = options['camera-fov'];
+        this.threeCamera.updateProjectionMatrix();
     }
 }
