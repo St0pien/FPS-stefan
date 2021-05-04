@@ -9,6 +9,7 @@ import Player from "./Player";
 export default class World {
     constructor(root) {
         this.root = root;
+        this.loadingScreen = document.querySelector('.loading-screen');
         this.scene = new Scene();
         this.renderer = new Renderer(this.root);
         this.player = new Player(this.scene);
@@ -23,7 +24,7 @@ export default class World {
         this.loadLevel();
 
         DefaultLoadingManager.onLoad = () => {
-            console.log('everything  loaded');
+            this.loadingScreen.remove();
         }
     }
 

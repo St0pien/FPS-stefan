@@ -17,8 +17,6 @@ export default class Camera {
     updateSize(renderer) {
         this.threeCamera.aspect = renderer.domElement.width / renderer.domElement.height;
         this.threeCamera.updateProjectionMatrix();
-
-        console.log(GUI.getOptions());
     }
 
     update() {
