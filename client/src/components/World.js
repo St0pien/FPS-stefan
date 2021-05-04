@@ -1,4 +1,4 @@
-import { AmbientLight, DefaultLoadingManager, Scene } from "three";
+import { AmbientLight, DefaultLoadingManager, Scene, Vector3 } from "three";
 import Renderer from "./Renderer";
 import Camera from "./Camera";
 import HttpService from "./HttpService";
@@ -55,7 +55,7 @@ export default class World {
         this.camera.update();
 
         if (this.maze) {
-            this.maze.update();
+            this.maze.update(time);
         }
 
         this.player.update(time);

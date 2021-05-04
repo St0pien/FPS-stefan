@@ -1,14 +1,5 @@
 import StateMachine from "./StateMachine";
-
-class State {
-    constructor(parent) {
-        this.parent = parent;
-    }
-
-    enter() {}
-    exit() {}
-    update() {}
-}
+import { State } from "./StateMachine";
 
 class IdleState extends State {
     constructor(parent) {

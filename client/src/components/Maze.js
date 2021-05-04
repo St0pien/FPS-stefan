@@ -8,7 +8,6 @@ export default class Maze {
         this.squareSize = squareSize;
         this.scene = scene;
         this.levelItems = [];
-        this.group = new Group();
 
         levelItems.forEach(item => {
             item.z = -item.z;
@@ -16,22 +15,19 @@ export default class Maze {
             item.x += 1/2;
             item.z += 1/2;
             switch (item.type) {
-                case "wall": this.levelItems.push(new Wall(item.x, 0, item.z, this.squareSize));
+                case "wall": this.levelItems.push(new Wall(item.x, 0, item.z, this.squareSize, this.scene));
                 break;
 
-                case "enemy": this.levelItems.push(new Enemy(item.x, 0, item.z, this.squareSize));
+                case "enemy": this.levelItems.push(new Enemy(item.x, 0, item.z, this.squareSize, this.scene));
                 break;
                 
-                case "treasure": this.levelItems.push(new Treasure(item.x, 0, item.z, this.squareSize));
+                case "treasure": this.levelItems.push(new Treasure(item.x, 0, item.z, this.squareSize, this.scene));
                 break;
 
-                case "light": this.levelItems.push(new Light(item.x, 0, item.z, this.squareSize));
+                case "light": this.levelItems.push(new Light(item.x, 0, item.z, this.squareSize, this.scene));
                 break;
             }
         });
-
-        this.group.add(...this.levelItems.map(i => i.obj));
-        this.scene.add(this.group);
 
         const geometry = new PlaneGeometry(this.size*this.squareSize, this.size*this.squareSize);
 
@@ -48,9 +44,9 @@ export default class Maze {
         this.scene.add(this.ceiling);
     }
 
-    update() {
+    update(time) {
         this.levelItems.forEach(i => {
-            i.update();
+            i.update(time);
         });
     }
 }

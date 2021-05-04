@@ -7,7 +7,7 @@ import fbxModel from "../assets/models/swatguy.fbx";
 import runningAnim from "../assets/animations/running.fbx";
 import idleAnim from "../assets/animations/idle.fbx";
 
-class CharacterControllerAnimations {
+export class CharacterControllerAnimations {
     constructor(animations) {
         this.anims = animations;
     }

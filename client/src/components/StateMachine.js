@@ -1,3 +1,13 @@
+export class State {
+    constructor(parent) {
+        this.parent = parent;
+    }
+
+    enter() {}
+    exit() {}
+    update() {}
+}
+
 export default class StateMachine {
     constructor() {
         this.states = {};
