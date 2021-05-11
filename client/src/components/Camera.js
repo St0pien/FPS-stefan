@@ -34,10 +34,13 @@ export default class Camera {
             const campPos = offset.applyMatrix4(this.target.obj.matrixWorld);
             this.threeCamera.position.set(campPos.x, campPos.y, campPos.z);
 
-            const lookat = new Vector3(0, 10, 0);
-            lookat.add(new Vector3(options['camera-horizontal'], options['camera-vertical'], 0));
+            const lookat = new Vector3(0, 100, 0);
             lookat.applyMatrix4(this.target.obj.matrixWorld);
             this.threeCamera.lookAt(lookat);
+
+            this.threeCamera.rotateX(options['camera-vertical']);
+            const dir = new Vector3(0, 1, );
+            this.threeCamera.rotateOnWorldAxis(dir, options['camera-horizontal'])
         }
 
         this.threeCamera.fov = options['camera-fov'];
