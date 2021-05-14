@@ -1,7 +1,8 @@
-import { BoxGeometry, DoubleSide, Mesh, MeshPhongMaterial, Object3D, PointLight, Vector3 } from "three";
+import { BoxGeometry, DoubleSide, Mesh, MeshPhongMaterial, Object3D, PointLight, Vector3, Group } from "three";
 import GUI from "./GUI";
 import EnemyController from "./EnemyController";
 import { wallMaterial } from "./Materials";
+import ParticleSystem from "./ParticleSystem";
 
 
 class LevelItem {
@@ -72,23 +73,36 @@ export class Treasure extends LevelItem {
 }
 
 export class Light extends LevelItem {
-    constructor(x, y, z, squareSize, scene) {
+    constructor(x, y, z, squareSize, scene, camera) {
         super(x, y, z, "light", squareSize, scene);
-        this.obj = new PointLight(0xfeffa6, 1, 1000);
+        this.obj = new Group();
+
+        this.light = new PointLight(0xffbd24, 1, 1000);
+        this.light.castShadow = true;
+        this.obj.add(this.light);
+
+        this.fire = new ParticleSystem({
+            parent: this.obj,
+            camera: camera
+        })
+
         this.setPosition();
-        this.obj.castShadow = true;
+        this.obj.position.y = 10;
+        this.fire.points.position.set(0, -10, 0);
         this.scene.add(this.obj);
     }
 
-    update() {
+    update(time) {
         if (GUI.getOptions().shadows) {
             if (!this.obj.castShadow) {
-                this.obj.castShadow = true;
+                this.light.castShadow = true;
             }
         } else {
-            this.obj.castShadow = false;
+            this.light.castShadow = false;
         }
 
-        this.obj.intensity = GUI.getOptions()['light-intensity'];
+        this.light.intensity = GUI.getOptions()['light-intensity'];
+
+        this.fire.update(time);
     }
 }

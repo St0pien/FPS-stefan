@@ -3,11 +3,12 @@ import { Wall, Enemy, Treasure, Light } from "./LevelItems";
 import { floorMaterial, ceilingMaterial } from "./Materials";
 
 export default class Maze {
-    constructor(scene, levelItems, size=10, squareSize=100) {
+    constructor(scene, levelItems, camera, size=10, squareSize=100) {
         this.size = size;
         this.squareSize = squareSize;
         this.scene = scene;
         this.levelItems = [];
+        this.camera = camera;
 
         levelItems.forEach(item => {
             item.z = -item.z;
@@ -24,7 +25,7 @@ export default class Maze {
                 case "treasure": this.levelItems.push(new Treasure(item.x, 0, item.z, this.squareSize, this.scene));
                 break;
 
-                case "light": this.levelItems.push(new Light(item.x, 0, item.z, this.squareSize, this.scene));
+                case "light": this.levelItems.push(new Light(item.x, 0, item.z, this.squareSize, this.scene, this.camera));
                 break;
             }
         });

@@ -4,6 +4,7 @@ import Camera from "./Camera";
 import HttpService from "./HttpService";
 import Maze from "./Maze";
 import Player from "./Player";
+import ParticleSystem from "./ParticleSystem";
 
 
 export default class World {
@@ -24,13 +25,13 @@ export default class World {
         this.loadLevel();
 
         DefaultLoadingManager.onLoad = () => {
-            this.loadingScreen.remove();
+            // this.loadingScreen.remove();
         }
     }
 
     async loadLevel() {
         const items = await this.httpService.loadLevel();
-        this.maze = new Maze(this.scene, items);
+        this.maze = new Maze(this.scene, items, this.camera.threeCamera);
     }
 
     render() {

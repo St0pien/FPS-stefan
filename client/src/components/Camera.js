@@ -39,7 +39,7 @@ export default class Camera {
             this.threeCamera.lookAt(lookat);
 
             this.threeCamera.rotateX(options['camera-vertical']);
-            const dir = new Vector3(0, 1, );
+            const dir = new Vector3(0, 1, 0);
             this.threeCamera.rotateOnWorldAxis(dir, options['camera-horizontal'])
         }
 
