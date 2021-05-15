@@ -8,6 +8,9 @@ const GUI = {
         'light-intensity': null,
         'shadows': null,
         'camera-top': null,
+        'fire-height': null,
+        'fire-width': null,
+        'fire-length': null
     },
 
     getOptions() {

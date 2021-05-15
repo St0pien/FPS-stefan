@@ -3,6 +3,7 @@ import LinearSpline from "./LinearSpline";
 import fire from "../assets/textures/fire/fire.png";
 import vs from "../shaders/particle.vert";
 import fs from "../shaders/particle.frag";
+import GUI from "./GUI";
 
 
 export default class ParticleSystem {
@@ -15,6 +16,8 @@ export default class ParticleSystem {
                 value: window.innerHeight / (1.0 * Math.tan(0.5 * 60.0 * Math.PI / 180.0))
             }
         };
+
+        this.rate = 300;
 
         this.material = new THREE.ShaderMaterial({
             uniforms: uniforms,
@@ -65,27 +68,34 @@ export default class ParticleSystem {
     }
 
     addParticles(timeElapsed) {
+        const options = GUI.getOptions();
+        const fireHeight = options['fire-height'];
+        const fireWidth = options['fire-width']
+        const fireLength = options['fire-length']
+
         if (!this.delay) {
             this.delay = 0.0;
         }
+
         this.delay += timeElapsed;
-        const n = Math.floor(this.delay * 300.0);
-        this.delay -= n / 300.0;
+        const calculatedRate = this.rate * fireLength * fireWidth / 25**2 + 10;
+        const n = Math.floor(this.delay * calculatedRate);
+        this.delay -= n / calculatedRate;
 
         for (let i = 0; i < n; i++) {
-            const life = (Math.random() * 0.75 + 0.25) * 1;
+            const life = (Math.random() * 0.75 + 0.25) * fireHeight / 25;
             this.particles.push({
                 position: new THREE.Vector3(
-                    (Math.random() * 2 - 1) * 15.0,
-                    (Math.random() * 2 - 1) * 15.0,
-                    (Math.random() * 2 - 1) * 15.0),
-                size: (Math.random() * 0.5 + 0.5) * 5.0,
+                    (Math.random() * 2 - 1) * 15.0 * fireLength / 25,
+                    (Math.random() * 2 - 1) * 15.0 * fireHeight / 25,
+                    (Math.random() * 2 - 1) * 15.0 * fireWidth / 25),
+                size: (Math.random() * 0.5 + 0.5) * 5.0 * fireHeight / 25,
                 colour: new THREE.Color(),
                 alpha: 1.0,
                 life: life,
                 maxLife: life,
                 rotation: Math.random() * 2.0 * Math.PI,
-                velocity: new THREE.Vector3(0, 80, 0),
+                velocity: new THREE.Vector3(0, 70 * fireHeight / 25, 0),
             });
         }
     }
