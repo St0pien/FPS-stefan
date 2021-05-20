@@ -23,8 +23,8 @@ export default class Camera {
         const options = GUI.getOptions();
 
         if (options['camera-top']) {
-            this.threeCamera.position.set(500, 800, 500);
-            this.threeCamera.lookAt(new Vector3(500, 0, 500));
+            this.threeCamera.position.set(200, 200, 300);
+            this.threeCamera.lookAt(new Vector3(200, 0, 300));
             return;
         }
 

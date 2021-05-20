@@ -22,7 +22,6 @@
 }
 
 .loading-screen {
-	display: none !important;
 	width: 100vw;
 	height: 100vh;
 	display: flex;
@@ -50,9 +49,9 @@
 	margin: 0 -6px;
 	border-left: 12px solid transparent;
 	border-right: 12px solid transparent;
-	border-bottom: 21.6px solid #65fd00;
+	border-bottom: 21.6px solid #ffbd24;
 	animation: blink 1s infinite;
-	filter: drop-shadow(0 0 18px #65fd00);
+	filter: drop-shadow(0 0 18px #ffbd24);
 }
 
 .arrow.down {

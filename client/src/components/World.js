@@ -25,13 +25,13 @@ export default class World {
         this.loadLevel();
 
         DefaultLoadingManager.onLoad = () => {
-            // this.loadingScreen.remove();
+            this.loadingScreen.remove();
         }
     }
 
     async loadLevel() {
         const items = await this.httpService.loadLevel();
-        this.maze = new Maze(this.scene, items, this.camera.threeCamera);
+        this.maze = new Maze(this.scene, items, this.camera.threeCamera, this.player.character);
     }
 
     render() {

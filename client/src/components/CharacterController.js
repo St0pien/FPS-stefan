@@ -1,5 +1,6 @@
 import CharacterControllerInput from "./CharacterControllerInput";
 import CharacterStateMachine from "./CharacterStateMachine";
+import Collider from "./Collider";
 import { AnimationMixer, LoadingManager, Quaternion, Vector3 } from "three";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
 
@@ -38,6 +39,7 @@ export default class CharacterController {
             });
 
             this.obj = fbx;
+            this.collider = new Collider(this.obj, this.params.scene.children, 7);
             this.params.scene.add(this.obj);
             
             this.mixer = new AnimationMixer(this.obj);
@@ -65,6 +67,8 @@ export default class CharacterController {
 
     update(timeElapsed) {
         if (!this.obj) return;
+
+        this.collider.update();
 
         this.stateMachine.update(timeElapsed, this.input);
 
@@ -119,6 +123,30 @@ export default class CharacterController {
 
         sideways.multiplyScalar(velocity.x * timeElapsed);
         forward.multiplyScalar(velocity.z * timeElapsed);
+
+        const collisionOffset = new Vector3(1, 1, 1);
+        this.collider.activeCollisions.forEach(collision => {
+            const dir = new Vector3();
+            dir.subVectors(collision.object.position, controlObject.position);
+
+            const futurePosition = controlObject.position.clone();
+            futurePosition.add(forward);
+            futurePosition.add(sideways);
+
+            if (Math.abs(dir.x) > Math.abs(dir.z)) {
+                if (Math.abs(futurePosition.x - collision.object.position.x) < Math.abs(controlObject.position.x - collision.object.position.x)) {
+                    collisionOffset.x = 0;
+                }
+            } else {
+                if (Math.abs(futurePosition.z - collision.object.position.z) < Math.abs(controlObject.position.z - collision.object.position.z)) {
+                    collisionOffset.z = 0;
+                }
+            }
+            
+        });
+
+        forward.multiply(collisionOffset);
+        sideways.multiply(collisionOffset);
 
         controlObject.position.add(forward);
         controlObject.position.add(sideways);
