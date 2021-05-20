@@ -7,7 +7,7 @@ import EnemyStateMachine from "./EnemyStateMachine";
 import fbxModel from "../assets/models/enemy.fbx"
 import enemyIdle from "../assets/animations/enemyidle.fbx";
 import middleKick from "../assets/animations/middlekick.fbx";
-import wheelKick from "../assets/animations/middlekick.fbx";
+import wheelKick from "../assets/animations/wheelkick.fbx";
 import kneeKick from "../assets/animations/kneekick.fbx"
 import hook from "../assets/animations/hook.fbx"
 import leftJab from "../assets/animations/leftjab.fbx"
