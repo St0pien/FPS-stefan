@@ -46,7 +46,7 @@ class EnemyAttackState extends State {
 
         this.attacks = [
             'middleKick',
-            'wheelKick',
+            'sideKick',
             'kneeKick',
             'hook',
             'leftJab',

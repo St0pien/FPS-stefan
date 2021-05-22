@@ -7,7 +7,7 @@ import EnemyStateMachine from "./EnemyStateMachine";
 import fbxModel from "../assets/models/enemy.fbx"
 import enemyIdle from "../assets/animations/enemyidle.fbx";
 import middleKick from "../assets/animations/middlekick.fbx";
-import wheelKick from "../assets/animations/wheelkick.fbx";
+import sideKick from "../assets/animations/sidekick.fbx";
 import kneeKick from "../assets/animations/kneekick.fbx"
 import hook from "../assets/animations/hook.fbx"
 import leftJab from "../assets/animations/leftjab.fbx"
@@ -61,7 +61,7 @@ export default class EnemyController {
             const loader = new FBXLoader(this.manager);
             loader.load(middleKick, (a) => loadCallback('middleKick', a));
             loader.load(enemyIdle, (a) => loadCallback('enemyIdle', a));
-            loader.load(wheelKick, (a) => loadCallback('wheelKick', a));
+            loader.load(sideKick, (a) => loadCallback('sideKick', a));
             loader.load(kneeKick, (a) => loadCallback('kneeKick', a));
             loader.load(hook, (a) => loadCallback('hook', a));
             loader.load(leftJab, (a) => loadCallback('leftJab', a));
