@@ -1,6 +1,7 @@
-import { LoopOnce } from "three";
 import StateMachine from "./StateMachine";
 import { State } from "./StateMachine";
+import EnemyFire from "./EnemyFire";
+import { Vector3 } from "three";
 
 class EnemyIdleState extends State {
     constructor(parent) {
@@ -26,9 +27,10 @@ class EnemyIdleState extends State {
         }
     }
 
-    update() {
+    update(timeElapsed) {
+        this.parent.fire.update(timeElapsed)
         if (this.parent.target.obj) {
-            if (this.parent.mesh.position.distanceTo(this.parent.target.obj.position) < 20) {
+            if (this.parent.mesh.position.distanceTo(this.parent.target.obj.position) < 40) {
                 this.parent.setState('enemyAttack');
             }
         }
@@ -40,64 +42,62 @@ class EnemyAttackState extends State {
     constructor(parent) {
         super(parent)
 
-        this.finishedCallback = () => {
-            this.finished();
-        }
-
-        this.attacks = [
-            'middleKick',
-            'sideKick',
-            'kneeKick',
-            'hook',
-            'leftJab',
-            'rightJab'
-        ]
+        this.name = "enemyAttack";
     }
 
     enter(prevState) {
-        const attackName = this.attacks[Math.floor(Math.random() * this.attacks.length)];
-        const enemyAttack = this.parent.animations.anims[attackName].action;
-        this.name = attackName;
-        this.mixer = enemyAttack.getMixer();
-        this.mixer.addEventListener('finished', this.finishedCallback);
+        const enemyAttack = this.parent.animations.anims['enemyAttack'].action;
 
         if (prevState) {
             const prevAction = this.parent.animations.anims[prevState.name].action;
 
-            enemyAttack.reset();
-            enemyAttack.setLoop(LoopOnce, 1);
-            enemyAttack.clampWhenFinished = true;
-            if (this.name != prevState.name) {
-                enemyAttack.crossFadeFrom(prevAction, 0.2, true);
-            }
+            enemyAttack.time = 0;
+            enemyAttack.enabled = true;
+            enemyAttack.setEffectiveTimeScale(1);
+            enemyAttack.setEffectiveWeight(1);
+            enemyAttack.crossFadeFrom(prevAction, 0.2, true);
             enemyAttack.play();
         } else {
             enemyAttack.play();
         }
     }
 
-    update() {
+    update(timeElapsed) {
+        const enemyAttack = this.parent.animations.anims['enemyAttack'].action;
+        const progress = enemyAttack.time / enemyAttack.getClip().duration;
+
+
+        const offset = new Vector3(0, 100, 120);
+        offset.applyMatrix4(this.parent.mesh.matrixWorld);
+        this.parent.fire.points.position.copy(offset);
+
+        if (progress > 0.3 && progress < 0.8) {
+            this.parent.fire.addParticles(timeElapsed);
+        }
+        this.parent.fire.update(timeElapsed)
+
         if (this.parent.target.obj) {
             this.parent.mesh.lookAt(this.parent.target.obj.position);
 
-            if (this.parent.mesh.position.distanceTo(this.parent.target.obj.position) > 20) {
+            if (this.parent.mesh.position.distanceTo(this.parent.target.obj.position) > 40) {
                 this.parent.setState('enemyIdle');
             }
         }
     }
-
-    finished() {
-        this.mixer.removeEventListener('finished', this.finishedCallback);
-        this.parent.setState('enemyAttack');
-    }
 }
 
 export default class EnemyStateMachine extends StateMachine{
-    constructor(animations, target, mesh) {
+    constructor(animations, scene, target, mesh, camera) {
         super();
         this.animations = animations;
         this.target = target;
-        this.mesh = mesh
+        this.mesh = mesh;
+        this.camera = camera;
+        this.fire = new EnemyFire({
+            scene,
+            parent: this.mesh,
+            camera: this.camera
+        });
         
         this.addState('enemyIdle', EnemyIdleState);
         this.addState('enemyAttack', EnemyAttackState);

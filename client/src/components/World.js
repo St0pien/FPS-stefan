@@ -4,7 +4,7 @@ import Camera from "./Camera";
 import HttpService from "./HttpService";
 import Maze from "./Maze";
 import Player from "./Player";
-import ParticleSystem from "./ParticleSystem";
+import EnemyFire from "./EnemyFire";
 
 
 export default class World {

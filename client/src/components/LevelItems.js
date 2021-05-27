@@ -2,7 +2,7 @@ import { BoxGeometry, DoubleSide, Mesh, MeshPhongMaterial, Object3D, PointLight,
 import GUI from "./GUI";
 import EnemyController from "./EnemyController";
 import { wallMaterial } from "./Materials";
-import ParticleSystem from "./ParticleSystem";
+import Fire from "./Fire";
 
 
 class LevelItem {
@@ -45,12 +45,13 @@ export class Wall extends LevelItem {
 }
 
 export class Enemy extends LevelItem {
-    constructor(x, y, z, squareSize, scene, player) {
+    constructor(x, y, z, squareSize, scene, player, camera) {
         super(x, y, z, "enemy", squareSize, scene);
         this.controller = new EnemyController({
             scene: this.scene,
             position: new Vector3(x * this.squareSize, 0.25, z * this.squareSize),
-            target: player
+            target: player,
+            camera: camera
         });
     }
 
@@ -82,7 +83,7 @@ export class Light extends LevelItem {
         this.light.castShadow = true;
         this.obj.add(this.light);
 
-        this.fire = new ParticleSystem({
+        this.fire = new Fire({
             parent: this.obj,
             camera: camera
         })

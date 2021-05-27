@@ -6,12 +6,8 @@ import EnemyStateMachine from "./EnemyStateMachine";
 
 import fbxModel from "../assets/models/enemy.fbx"
 import enemyIdle from "../assets/animations/enemyidle.fbx";
-import middleKick from "../assets/animations/middlekick.fbx";
-import sideKick from "../assets/animations/sidekick.fbx";
-import kneeKick from "../assets/animations/kneekick.fbx"
-import hook from "../assets/animations/hook.fbx"
-import leftJab from "../assets/animations/leftjab.fbx"
-import rightJab from "../assets/animations/rightjab.fbx"
+import enemyAttack from "../assets/animations/enemyattack.fbx";
+
 
 export default class EnemyController {
     constructor(params) {
@@ -35,7 +31,7 @@ export default class EnemyController {
             });
 
             this.obj = fbx;
-            this.stateMachine = new EnemyStateMachine(new CharacterControllerAnimations(this.animations), this.params.target, this.obj);
+            this.stateMachine = new EnemyStateMachine(new CharacterControllerAnimations(this.animations), this.params.scene, this.params.target, this.obj, this.params.camera);
             this.params.scene.add(this.obj);
             const collisionHelper = new Mesh(new BoxGeometry(5, 18, 5), new MeshBasicMaterial({ color: 0xff0000, wireframe: true }));
             this.params.scene.add(collisionHelper);
@@ -59,13 +55,9 @@ export default class EnemyController {
             }
 
             const loader = new FBXLoader(this.manager);
-            loader.load(middleKick, (a) => loadCallback('middleKick', a));
             loader.load(enemyIdle, (a) => loadCallback('enemyIdle', a));
-            loader.load(sideKick, (a) => loadCallback('sideKick', a));
-            loader.load(kneeKick, (a) => loadCallback('kneeKick', a));
-            loader.load(hook, (a) => loadCallback('hook', a));
-            loader.load(leftJab, (a) => loadCallback('leftJab', a));
-            loader.load(rightJab, (a) => loadCallback('rightJab', a));
+            loader.load(enemyAttack, (a) => loadCallback('enemyAttack', a));
+
         });
     }
 
