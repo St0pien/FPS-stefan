@@ -33,7 +33,7 @@ export default class EnemyController {
             this.obj = fbx;
             this.stateMachine = new EnemyStateMachine(new CharacterControllerAnimations(this.animations), this.params.scene, this.params.target, this.obj, this.params.camera);
             this.params.scene.add(this.obj);
-            const collisionHelper = new Mesh(new BoxGeometry(5, 18, 5), new MeshBasicMaterial({ color: 0xff0000, wireframe: true }));
+            const collisionHelper = new Mesh(new BoxGeometry(7, 18, 7), new MeshBasicMaterial({ color: 0xff0000, wireframe: true }));
             this.params.scene.add(collisionHelper);
             collisionHelper.position.set(position.x, position.y + 9.5, position.z);
             collisionHelper.visible = false;

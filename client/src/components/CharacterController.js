@@ -1,10 +1,11 @@
 import CharacterControllerInput from "./CharacterControllerInput";
 import CharacterStateMachine from "./CharacterStateMachine";
 import Collider from "./Collider";
-import { AnimationMixer, LoadingManager, Quaternion, Vector3 } from "three";
+import PlayerFire from './PlayerFire';
+import { AnimationMixer, LoadingManager, Quaternion, Vector3, MathUtils, Euler } from "three";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
 
-import fbxModel from "../assets/models/swatguy.fbx";
+import fbxModel from "../assets/models/player.fbx";
 import runningAnim from "../assets/animations/running.fbx";
 import idleAnim from "../assets/animations/idle.fbx";
 
@@ -25,6 +26,8 @@ export default class CharacterController {
         this.animations = {};
         this.input = new CharacterControllerInput();
         this.stateMachine = new CharacterStateMachine(new CharacterControllerAnimations(this.animations));
+        this.rightArmAngle = new Euler();
+        this.camera = null;
 
         this.loadModels();
     }
@@ -32,8 +35,8 @@ export default class CharacterController {
     loadModels() {
         const loader = new FBXLoader();
         loader.load(fbxModel, fbx => {
-            fbx.scale.setScalar(0.1);
-            fbx.position.set(600, 0, 700);
+            fbx.scale.setScalar(0.09);
+            fbx.position.set(600, 2, 700);
             fbx.traverse(c => {
                 c.castShadow = true;
             });
@@ -41,8 +44,19 @@ export default class CharacterController {
             this.obj = fbx;
             this.collider = new Collider(this.obj, this.params.scene.children, 7);
             this.params.scene.add(this.obj);
+            this.obj.traverse(c => {
+                if (c.name == 'mixamorigRightArm') {
+                    this.rightArm = c;
+                }
+            });
             
             this.mixer = new AnimationMixer(this.obj);
+
+            this.fire = new PlayerFire({
+                scene: this.params.scene,
+                parent: this.obj,
+                camera: this.camera
+            });
             
             this.manager = new LoadingManager();
             this.manager.onLoad = () => {
@@ -156,5 +170,22 @@ export default class CharacterController {
         if (this.mixer) {
             this.mixer.update(timeElapsed)
         }
+
+        if (this.input.keys.attack) {
+            this.rightArmAngle.z = MathUtils.lerp(this.rightArmAngle.z, -Math.PI/2.5, timeElapsed*10);
+        } else if (this.rightArmAngle.z < 0) {
+            this.rightArmAngle.z += Math.sin(timeElapsed)*5;
+        }
+
+        this.rightArm.rotateZ(this.rightArmAngle.z);
+
+        const offset = new Vector3(-40, 100, 50);
+        offset.applyMatrix4(this.obj.matrixWorld);
+        this.fire.points.position.copy(offset);
+
+        if (this.input.keys.attack) {
+            this.fire.addParticles(timeElapsed);
+        }
+        this.fire.update(timeElapsed);
     }
 }

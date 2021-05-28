@@ -10,7 +10,9 @@ const GUI = {
         'camera-top': null,
         'fire-height': null,
         'fire-width': null,
-        'fire-length': null
+        'fire-length': null,
+        'attack-spread': null,
+        'attack-size': null
     },
 
     getOptions() {

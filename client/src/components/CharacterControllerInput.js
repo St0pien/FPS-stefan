@@ -5,6 +5,7 @@ export default class CharacterControllerInput {
             backward: false,
             left: false,
             right: false,
+            attack: false
         }
 
         window.addEventListener('keydown', (e) => this.onKeyDown(e));
@@ -25,6 +26,9 @@ export default class CharacterControllerInput {
             case 68: // d
                 this.keys.right = true;
                 break;
+            case 32: // spacebar
+                this.keys.attack = true;
+                break;
         }
     }
 
@@ -41,6 +45,9 @@ export default class CharacterControllerInput {
                 break;
             case 68: // d
                 this.keys.right = false;
+                break;
+            case 32: // spacebar
+                this.keys.attack = false;
                 break;
         }
     }

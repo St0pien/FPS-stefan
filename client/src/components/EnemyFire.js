@@ -4,6 +4,7 @@ import fire from "../assets/textures/fire/fire.png";
 import vs from "../shaders/particle.vert";
 import fs from "../shaders/particle.frag";
 import { Quaternion, Vector3 } from "three";
+import GUI from './GUI';
 
 
 export default class EnemyFire {
@@ -13,7 +14,7 @@ export default class EnemyFire {
                 value: new THREE.TextureLoader().load(fire)
             },
             pointMultiplier: {
-                value: window.innerHeight / (10.0 * Math.tan(0.5 * 60.0 * Math.PI / 180.0))
+                value: window.innerHeight / (8.0 * Math.tan(0.5 * 60.0 * Math.PI / 180.0))
             }
         };
 
@@ -81,6 +82,8 @@ export default class EnemyFire {
             this.delay = 0.0;
         }
 
+        const options = GUI.getOptions();
+
         this.delay += timeElapsed;
         const calculatedRate = this.rate;
         const n = Math.floor(this.delay * calculatedRate);
@@ -90,16 +93,16 @@ export default class EnemyFire {
             const life = (Math.random() * 0.75 + 0.25) * 1.0;
             this.particles.push({
                 position: new THREE.Vector3(
-                    (Math.random() * 2 - 1) * 2.0,
-                    (Math.random() * 2 - 1) * 2.0,
-                    (Math.random() * 2 - 1) * 2.0),
-                size: (Math.random() * 0.5 + 0.5) * 5.0,
+                    (Math.random() * 2 - 1) * 2.0 * options['attack-spread'],
+                    (Math.random() * 2 - 1) * 2.0 * options['attack-spread'],
+                    (Math.random() * 2 - 1) * 2.0 * options['attack-spread']),
+                size: (Math.random() * 0.5 + 0.5) * 5.0 * options['attack-size'],
                 colour: new THREE.Color(),
                 alpha: 1.0,
                 life: life,
                 maxLife: life,
                 rotation: Math.random() * 2.0 * Math.PI,
-                velocity: new THREE.Vector3(0, 2, 50),
+                velocity: new THREE.Vector3(0, 2, 70),
             });
         }
     }

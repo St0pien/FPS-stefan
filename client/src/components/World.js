@@ -4,7 +4,6 @@ import Camera from "./Camera";
 import HttpService from "./HttpService";
 import Maze from "./Maze";
 import Player from "./Player";
-import EnemyFire from "./EnemyFire";
 
 
 export default class World {
@@ -15,6 +14,7 @@ export default class World {
         this.renderer = new Renderer(this.root);
         this.player = new Player(this.scene);
         this.camera = new Camera(this.renderer.threeRenderer, this.player);
+        this.player.character.camera = this.camera.threeCamera;
         this.ambient = new AmbientLight(0xffffff, 0.2);
         this.scene.add(this.ambient);
 

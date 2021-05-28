@@ -23,8 +23,8 @@ export default class Camera {
         const options = GUI.getOptions();
 
         if (options['camera-top']) {
-            this.threeCamera.position.set(200, 200, 300);
-            this.threeCamera.lookAt(new Vector3(200, 0, 300));
+            this.threeCamera.position.set(500, 500, 500);
+            this.threeCamera.lookAt(new Vector3(500, 0, 500));
             return;
         }
 
@@ -40,7 +40,7 @@ export default class Camera {
 
             this.threeCamera.rotateX(options['camera-vertical']);
             const dir = new Vector3(0, 1, 0);
-            this.threeCamera.rotateOnWorldAxis(dir, options['camera-horizontal'])
+            this.threeCamera.rotateOnWorldAxis(dir, options['camera-horizontal']);
         }
 
         this.threeCamera.fov = options['camera-fov'];
