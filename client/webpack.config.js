@@ -1,12 +1,14 @@
+const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
     entry: './src/main.js',
     output: {
+        path: path.resolve(__dirname, '..', 'backend', 'src', 'main', 'resources', 'public', 'game'),
         filename: 'bundle.js'
     },
-    mode: 'development',
+    mode: 'production',
 
     plugins: [
         new HtmlWebpackPlugin({
@@ -26,7 +28,7 @@ module.exports = {
                 use: [MiniCssExtractPlugin.loader, 'css-loader']
             },
             {
-                test: /\.(png|jp(e*)g|svg|fbx)$/,
+                test: /\.(png|jp(e*)g|svg|gif|fbx)$/,
                 use: [
                     {
                         loader: 'url-loader',

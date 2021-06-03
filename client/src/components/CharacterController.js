@@ -2,12 +2,11 @@ import CharacterControllerInput from "./CharacterControllerInput";
 import CharacterStateMachine from "./CharacterStateMachine";
 import Collider from "./Collider";
 import PlayerFire from './PlayerFire';
-import { AnimationMixer, LoadingManager, Quaternion, Vector3, MathUtils, Euler } from "three";
-import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
-
-import fbxModel from "../assets/models/player.fbx";
-import runningAnim from "../assets/animations/running.fbx";
-import idleAnim from "../assets/animations/idle.fbx";
+import { AnimationMixer, Quaternion, Vector3, MathUtils, Euler, Raycaster } from "three";
+import { SkeletonUtils } from "three/examples/jsm/utils/SkeletonUtils";
+import getModel from "./Models";
+import getAnimation from "./Animations";
+import Stats from "./Stats";
 
 export class CharacterControllerAnimations {
     constructor(animations) {
@@ -28,59 +27,69 @@ export default class CharacterController {
         this.stateMachine = new CharacterStateMachine(new CharacterControllerAnimations(this.animations));
         this.rightArmAngle = new Euler();
         this.camera = null;
+        this.life = 100;
+        Stats.updatePlayerLife(this.life);
+        this.ammo = 100;
+        Stats.updatePlayerAmmo(this.ammo);
 
-        this.loadModels();
+        this.raycaster = new Raycaster();
+        this.attackDelay = 0;
     }
 
-    loadModels() {
-        const loader = new FBXLoader();
-        loader.load(fbxModel, fbx => {
-            fbx.scale.setScalar(0.09);
-            fbx.position.set(600, 2, 700);
-            fbx.traverse(c => {
-                c.castShadow = true;
-            });
-
-            this.obj = fbx;
-            this.collider = new Collider(this.obj, this.params.scene.children, 7);
-            this.params.scene.add(this.obj);
-            this.obj.traverse(c => {
-                if (c.name == 'mixamorigRightArm') {
-                    this.rightArm = c;
-                }
-            });
-            
-            this.mixer = new AnimationMixer(this.obj);
-
-            this.fire = new PlayerFire({
-                scene: this.params.scene,
-                parent: this.obj,
-                camera: this.camera
-            });
-            
-            this.manager = new LoadingManager();
-            this.manager.onLoad = () => {
-                this.stateMachine.setState('idle');
-            }
-
-            const loadCallback = (name, anim) => {
-                const clip = anim.animations[0];
-                const action = this.mixer.clipAction(clip);
-
-                this.animations[name] = {
-                    clip: clip,
-                    action: action
-                }
-            }
-
-            const loader = new FBXLoader(this.manager);
-            loader.load(runningAnim, (a) => loadCallback('running', a));
-            loader.load(idleAnim, (a) => loadCallback('idle', a));
+    init() {
+        const fbx = SkeletonUtils.clone(getModel('player'));
+        fbx.scale.setScalar(0.09);
+        fbx.position.set(600, 1.5, 700);
+        fbx.traverse(c => {
+            c.castShadow = true;
         });
+
+        this.obj = fbx;
+        this.collider = new Collider(this.obj, this.params.scene, 7);
+        this.params.scene.add(this.obj);
+        this.obj.traverse(c => {
+            if (c.name == 'mixamorigRightArm') {
+                this.rightArm = c;
+            }
+        });
+
+        this.mixer = new AnimationMixer(this.obj);
+
+        this.fire = new PlayerFire({
+            scene: this.params.scene,
+            parent: this.obj,
+            camera: this.camera
+        });
+
+        const addAnimation = (name, anim) => {
+            const clip = anim;
+            const action = this.mixer.clipAction(clip);
+
+            this.animations[name] = {
+                clip: clip,
+                action: action
+            }
+        }
+
+        const running = getAnimation('running').clone();
+        const idle = getAnimation('idle').clone();
+        addAnimation('running', running)
+        addAnimation('idle', idle)
+        this.stateMachine.setState('idle');
+    }
+
+    onHit() {
+        this.life -= 0.1;
+        Stats.updatePlayerLife(this.life)
+
+        if (this.life <= 0) {
+            Stats.death();
+        }
     }
 
     update(timeElapsed) {
         if (!this.obj) return;
+        if (!timeElapsed) return;
 
         this.collider.update();
 
@@ -156,11 +165,12 @@ export default class CharacterController {
                     collisionOffset.z = 0;
                 }
             }
-            
+
         });
 
         forward.multiply(collisionOffset);
         sideways.multiply(collisionOffset);
+
 
         controlObject.position.add(forward);
         controlObject.position.add(sideways);
@@ -171,10 +181,14 @@ export default class CharacterController {
             this.mixer.update(timeElapsed)
         }
 
-        if (this.input.keys.attack) {
-            this.rightArmAngle.z = MathUtils.lerp(this.rightArmAngle.z, -Math.PI/2.5, timeElapsed*10);
+        if (this.input.keys.attack && this.ammo > 0) {
+            this.rightArmAngle.z = MathUtils.lerp(this.rightArmAngle.z, -Math.PI / 2.5, timeElapsed * 10);
+            this.ammo -= 0.05;
+            Stats.updatePlayerAmmo(this.ammo);
+
+            this.damageEnemy();
         } else if (this.rightArmAngle.z < 0) {
-            this.rightArmAngle.z += Math.sin(timeElapsed)*5;
+            this.rightArmAngle.z += Math.sin(timeElapsed) * 5;
         }
 
         this.rightArm.rotateZ(this.rightArmAngle.z);
@@ -183,9 +197,29 @@ export default class CharacterController {
         offset.applyMatrix4(this.obj.matrixWorld);
         this.fire.points.position.copy(offset);
 
-        if (this.input.keys.attack) {
+        if (this.input.keys.attack && this.ammo > 0) {
             this.fire.addParticles(timeElapsed);
         }
         this.fire.update(timeElapsed);
+
+        this.attackDelay -= timeElapsed;
+    }
+
+    damageEnemy() {
+        if (this.attackDelay > 0) return;
+
+        const start = new Vector3(-40, 100, 50);
+        start.applyMatrix4(this.obj.matrixWorld);
+        const dir = new Vector3();
+        this.obj.getWorldDirection(dir);
+        this.raycaster.set(start, dir);
+        this.raycaster.far = 50;
+        const hits = this.raycaster.intersectObjects(this.params.scene.children, true);
+        if(hits.length > 0) {
+            hits.forEach(hit => {
+                if (hit.object.onHit) hit.object.onHit();
+            });
+        }
+        this.attackDelay = 0.4;
     }
 }

@@ -1,64 +1,79 @@
 import { CharacterControllerAnimations } from "./CharacterController";
 import { AnimationMixer, BoxGeometry, Mesh, MeshBasicMaterial } from "three";
-import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
 import EnemyStateMachine from "./EnemyStateMachine";
+import getModel from "./Models";
+import { SkeletonUtils } from "three/examples/jsm/utils/SkeletonUtils";
 
-
-import fbxModel from "../assets/models/enemy.fbx"
-import enemyIdle from "../assets/animations/enemyidle.fbx";
-import enemyAttack from "../assets/animations/enemyattack.fbx";
+import getAnimation from "./Animations";
+import Stats from './Stats';
 
 
 export default class EnemyController {
     constructor(params) {
         this.params = params;
 
-        this.animations = {};        
+        this.animations = {};
 
         this.loadModels();
+
+        this.index = params.index;
+        this.life = 100;
+        Stats.addEnemy();
+        Stats.updateEnemy(this.index, this.life);
     }
 
     loadModels() {
-        const loader = new FBXLoader();
-        loader.load(fbxModel, fbx => {
-            fbx.scale.setScalar(0.1);
-            const { position } = this.params;
-            fbx.position.set(position.x, position.y, position.z);
-            fbx.traverse(c => {
-                if (c.isMesh) {
-                    c.castShadow = true;
-                }
-            });
+        const fbx = SkeletonUtils.clone(getModel('enemy'));
+        fbx.scale.setScalar(0.1);
+        const { position } = this.params;
+        fbx.position.set(position.x, position.y, position.z);
+        fbx.traverse(c => {
+            if (c.isMesh) {
+                c.castShadow = true;
+            }
+        });
 
-            this.obj = fbx;
-            this.stateMachine = new EnemyStateMachine(new CharacterControllerAnimations(this.animations), this.params.scene, this.params.target, this.obj, this.params.camera);
-            this.params.scene.add(this.obj);
-            const collisionHelper = new Mesh(new BoxGeometry(7, 18, 7), new MeshBasicMaterial({ color: 0xff0000, wireframe: true }));
-            this.params.scene.add(collisionHelper);
-            collisionHelper.position.set(position.x, position.y + 9.5, position.z);
-            collisionHelper.visible = false;
-            
-            this.mixer = new AnimationMixer(this.obj);
+        this.obj = fbx;
+        this.stateMachine = new EnemyStateMachine(new CharacterControllerAnimations(this.animations), this.params.scene, this.params.target, this.obj, this.params.camera);
+        this.params.scene.add(this.obj);
+        const collisionHelper = new Mesh(new BoxGeometry(7, 18, 7), new MeshBasicMaterial({ color: 0xff0000, wireframe: true }));
+        this.params.scene.add(collisionHelper);
+        collisionHelper.position.set(position.x, position.y + 9.5, position.z);
+        collisionHelper.visible = false;
 
-            const loadCallback = (name, anim) => {
-                const clip = anim.animations[0];
-                const action = this.mixer.clipAction(clip);
+        this.mixer = new AnimationMixer(this.obj);
 
-                this.animations[name] = {
-                    clip: clip,
-                    action: action
-                }
+        const addAnimation = (name, anim) => {
+            const clip = anim;
+            const action = this.mixer.clipAction(clip);
 
-                if(this.animations.enemyIdle) {
-                    this.stateMachine.setState('enemyIdle')
-                }
+            this.animations[name] = {
+                clip: clip,
+                action: action
             }
 
-            const loader = new FBXLoader(this.manager);
-            loader.load(enemyIdle, (a) => loadCallback('enemyIdle', a));
-            loader.load(enemyAttack, (a) => loadCallback('enemyAttack', a));
+            if (this.animations.enemyIdle) {
+                this.stateMachine.setState('enemyIdle')
+            }
+        }
 
-        });
+        const enemyIdle = getAnimation('enemyIdle').clone();
+        const enemyAttack = getAnimation('enemyAttack').clone();
+        const enemyDeath = getAnimation('enemyDeath').clone();
+
+        addAnimation('enemyIdle', enemyIdle);
+        addAnimation('enemyAttack', enemyAttack);
+        addAnimation('enemyDeath', enemyDeath);
+        this.stateMachine.setState('enemyIdle');
+
+        collisionHelper.onHit = () => {
+            this.life -= 20;
+            Stats.updateEnemy(this.index, this.life);
+            if (this.life <= 0) {
+                this.stateMachine.setState('enemyDeath');
+                this.params.scene.remove(collisionHelper);
+            }
+        }
     }
 
     update(timeElapsed) {

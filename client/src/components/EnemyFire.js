@@ -3,7 +3,7 @@ import LinearSpline from "./LinearSpline";
 import fire from "../assets/textures/fire/fire.png";
 import vs from "../shaders/particle.vert";
 import fs from "../shaders/particle.frag";
-import { Quaternion, Vector3 } from "three";
+import { Vector3 } from "three";
 import GUI from './GUI';
 
 

@@ -11,6 +11,7 @@ export default class Maze {
         this.camera = camera;
         this.player = player
 
+        let enemyCount = 0;
         levelItems.forEach(item => {
             item.z = -item.z;
             item.z += this.size-1;
@@ -20,7 +21,7 @@ export default class Maze {
                 case "wall": this.levelItems.push(new Wall(item.x, 0, item.z, this.squareSize, this.scene));
                 break;
 
-                case "enemy": this.levelItems.push(new Enemy(item.x, 0, item.z, this.squareSize, this.scene, this.player, this.camera));
+                case "enemy": this.levelItems.push(new Enemy(item.x, 0, item.z, this.squareSize, this.scene, this.player, this.camera, enemyCount++));
                 break;
                 
                 case "treasure": this.levelItems.push(new Treasure(item.x, 0, item.z, this.squareSize, this.scene));

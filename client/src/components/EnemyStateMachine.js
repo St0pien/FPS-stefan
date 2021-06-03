@@ -1,7 +1,7 @@
 import StateMachine from "./StateMachine";
 import { State } from "./StateMachine";
 import EnemyFire from "./EnemyFire";
-import { Vector3 } from "three";
+import { LoopOnce, Vector3 } from "three";
 
 class EnemyIdleState extends State {
     constructor(parent) {
@@ -73,16 +73,48 @@ class EnemyAttackState extends State {
 
         if (progress > 0.3 && progress < 0.8) {
             this.parent.fire.addParticles(timeElapsed);
+
+            if (this.parent.target.obj) {
+                this.parent.target.onHit();
+            }
         }
         this.parent.fire.update(timeElapsed)
 
         if (this.parent.target.obj) {
-            this.parent.mesh.lookAt(this.parent.target.obj.position);
+            this.parent.mesh.lookAt(this.parent.target.obj.position);            
 
             if (this.parent.mesh.position.distanceTo(this.parent.target.obj.position) > 40) {
                 this.parent.setState('enemyIdle');
             }
         }
+    }
+}
+
+class EnemyDeathState extends State {
+    constructor(parent) {
+        super(parent);
+
+        this.name = "enemyDeath"
+    }
+
+    enter(prevState) {
+        const enemyDeath = this.parent.animations.anims['enemyDeath'].action;
+
+        if (prevState) {
+            const prevAction = this.parent.animations.anims[prevState.name].action;
+
+            enemyDeath.reset();
+            enemyDeath.setLoop(LoopOnce, 1);
+            enemyDeath.clampWhenFinished = true;
+            enemyDeath.crossFadeFrom(prevAction, 0.2, true);
+            enemyDeath.play();
+        } else {
+            enemyDeath.play();
+        }
+    }
+
+    update(timeElapsed) {
+        this.parent.fire.update(timeElapsed);
     }
 }
 
@@ -101,5 +133,6 @@ export default class EnemyStateMachine extends StateMachine{
         
         this.addState('enemyIdle', EnemyIdleState);
         this.addState('enemyAttack', EnemyAttackState);
+        this.addState('enemyDeath', EnemyDeathState);
     }
 }

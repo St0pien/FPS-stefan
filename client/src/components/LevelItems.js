@@ -45,13 +45,14 @@ export class Wall extends LevelItem {
 }
 
 export class Enemy extends LevelItem {
-    constructor(x, y, z, squareSize, scene, player, camera) {
+    constructor(x, y, z, squareSize, scene, player, camera, index) {
         super(x, y, z, "enemy", squareSize, scene);
         this.controller = new EnemyController({
             scene: this.scene,
             position: new Vector3(x * this.squareSize, 0.25, z * this.squareSize),
             target: player,
-            camera: camera
+            camera,
+            index
         });
     }
 

@@ -1,9 +1,11 @@
-import { AmbientLight, DefaultLoadingManager, Scene, Vector3 } from "three";
+import { AmbientLight, DefaultLoadingManager, Scene } from "three";
 import Renderer from "./Renderer";
 import Camera from "./Camera";
 import HttpService from "./HttpService";
 import Maze from "./Maze";
 import Player from "./Player";
+import { loadModels } from "./Models";
+import { loadAnimations } from "./Animations";
 
 
 export default class World {
@@ -12,9 +14,18 @@ export default class World {
         this.loadingScreen = document.querySelector('.loading-screen');
         this.scene = new Scene();
         this.renderer = new Renderer(this.root);
+
+        this.init();
+    }
+
+    async init() {
+        await loadModels();
+        await loadAnimations();
+
         this.player = new Player(this.scene);
         this.camera = new Camera(this.renderer.threeRenderer, this.player);
         this.player.character.camera = this.camera.threeCamera;
+        this.player.character.init();
         this.ambient = new AmbientLight(0xffffff, 0.2);
         this.scene.add(this.ambient);
 
@@ -26,6 +37,8 @@ export default class World {
 
         DefaultLoadingManager.onLoad = () => {
             this.loadingScreen.remove();
+            document.querySelector('.player-stats').style.display = 'block';
+            document.querySelector('.enemies-stats').style.display = 'block';
         }
     }
 

@@ -1,9 +1,11 @@
-import spark.kotlin.*
-import spark.Spark.*
 import com.google.gson.Gson
 import controllers.LevelEditor
+import models.GameResult
 import models.Level
 import models.LevelItem
+import spark.Spark.*
+import spark.kotlin.*
+import java.sql.DriverManager
 
 fun main(args: Array<String>) {
     spark.kotlin.staticFiles.location("/public")
@@ -15,7 +17,25 @@ fun main(args: Array<String>) {
         response.header("Access-Control-Allow-Headers", "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version");
     }
 
+    options("/*") {
+        "OK"
+    }
+
     val levelEditor = LevelEditor()
+    val conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/FPS", "postgres", "system")
+
+    get("/game") {
+        response.redirect("/game/")
+    }
+
+    path("/api") {
+        post("/result", "application/json") {
+            val gameResult = Gson().fromJson(request.body(), GameResult::class.java)
+            val stmt = conn.createStatement()
+            val result = stmt.executeUpdate("INSERT INTO games (killedenemies, gamewon) values (${gameResult.killedEnemies}, ${gameResult.gameWon})")
+            "Ok"
+        }
+    }
 
     path("/editor") {
         get("") {

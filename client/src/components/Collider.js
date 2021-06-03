@@ -1,19 +1,21 @@
 import { Raycaster, Vector3 } from "three";
 
 export default class Collider {
-    constructor(mesh, collidables, radius) {
+    constructor(mesh, wrapper, radius) {
         this.mesh = mesh;
         this.radius = radius
-        this.collidables = [];
-        collidables.forEach(c => {
-            if (c.type == "Mesh") this.collidables.push(c);
-        });
+        this.wrapper = wrapper;
         this.raycaster = new Raycaster();
         this.activeCollisions = [];
     }
 
     update() {
         if (!this.mesh) return;
+
+        this.collidables = [];
+        this.wrapper.children.forEach(c => {
+            if (c.type == "Mesh") this.collidables.push(c);
+        });
 
         this.activeCollisions.splice(0);
         this.collidables.forEach(obj => {
