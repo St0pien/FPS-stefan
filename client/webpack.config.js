@@ -8,7 +8,7 @@ module.exports = {
         path: path.resolve(__dirname, '..', 'backend', 'src', 'main', 'resources', 'public', 'game'),
         filename: 'bundle.js'
     },
-    mode: 'production',
+    mode: 'development',
 
     plugins: [
         new HtmlWebpackPlugin({

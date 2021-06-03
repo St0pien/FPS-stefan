@@ -1,4 +1,6 @@
 function uploadResult(enemies, gameWon) {
+    if (Stats.statsSent) return;
+
     const killedEnemies= enemies.filter(e => e.value <= 0).length;
 
     const baseurl = process.env.NODE_ENV == "development" ? "http://localhost:3000/" : "/";
@@ -12,6 +14,7 @@ function uploadResult(enemies, gameWon) {
             gameWon
         })
     })
+    Stats.statsSent = true;
 }
 
 const Stats = {
@@ -30,6 +33,7 @@ const Stats = {
 
     enemiesWrapper: document.querySelector('.enemies-stats'),
     enemies: [],
+    statsSent: false,
 
     updatePlayerLife(value) {
         this.player.life.value = value;
