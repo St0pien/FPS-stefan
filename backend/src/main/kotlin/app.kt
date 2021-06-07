@@ -7,9 +7,16 @@ import spark.Spark.*
 import spark.kotlin.*
 import java.sql.DriverManager
 
+fun getPort(): Int {
+    val processBuilder = ProcessBuilder()
+    return if (processBuilder.environment()["PORT"] != null) {
+        processBuilder.environment()["PORT"]!!.toInt()
+    } else 5000
+}
+
 fun main(args: Array<String>) {
     spark.kotlin.staticFiles.location("/public")
-    spark.kotlin.port(3000)
+    spark.kotlin.port(getPort())
 
     before() {
         response.header("Access-Control-Allow-Origin", "http://localhost:8080");
