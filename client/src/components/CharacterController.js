@@ -48,7 +48,7 @@ export default class CharacterController {
         this.collider = new Collider(this.obj, this.params.scene, 7);
         this.params.scene.add(this.obj);
         this.obj.traverse(c => {
-            if (c.name == 'mixamorigRightArm') {
+            if (c.name == 'mixamorig1RightArm') {
                 this.rightArm = c;
             }
         });
