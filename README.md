@@ -1,4 +1,4 @@
-# FPS-stefan
+# FPS
 Simple and weird first person game made as a high school project, using Kotlin on server side and Three.js on client side
 
 ## Tools used
